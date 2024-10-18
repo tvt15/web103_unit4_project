@@ -1,0 +1,26 @@
+.view-cars-container {
+    padding: 20px;
+  }
+  
+  .cars-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .car-item {
+    background-color: #7a1f1f;
+    padding: 15px;
+    border-radius: 8px;
+    width: 250px;
+  }
+  
+  .view-btn, .edit-btn, .delete-btn {
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  
+  h3 {
+    color: #333;
+  }
+  

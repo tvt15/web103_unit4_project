@@ -1,0 +1,22 @@
+.edit-car-container {
+    padding: 20px;
+  }
+  
+  .edit-car-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  label {
+    font-size: 1rem;
+  }
+  
+  button {
+    background-color: #28A745;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+  }
+  

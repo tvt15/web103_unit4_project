@@ -1,0 +1,22 @@
+.create-car-container {
+    padding: 20px;
+  }
+  
+  .create-car-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  label {
+    font-size: 1rem;
+  }
+  
+  button {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+  }
+  

@@ -1,13 +1,52 @@
-import React from 'react'
 import '../App.css'
+import React, { useEffect, useState } from 'react';
+import { getCar } from '../services/CarsAPI';
+import { useParams } from 'react-router-dom';
 
-const CarDetails = () => {
+const CarDetails = ({ title }) => {
+  const { id } = useParams();
+  const [car, setCar] = useState(null);
+  const [error, setError] = useState('');
 
-    return (
-        <div>
+  useEffect(() => {
+    const fetchCar = async () => {
+      try {
+        const carData = await getCar(id);
+        setCar(carData);
+      } catch (err) {
+        setError('Failed to fetch car details.');
+      }
+    };
+    fetchCar();
+  }, [id]);
 
-        </div>
-    )
-}
+  if (error) {
+    return <p>{error}</p>;
+  }
 
-export default CarDetails
+  if (!car) {
+    return <p>Loading...</p>;
+  }
+
+  // Safely rendering nested objects such as car.options
+  const { name, price, options } = car;
+
+  return (
+    <div>
+      <h1>{title}</h1>
+      <p>Name: {name}</p>
+      <p>Price: ${price}</p>
+      <h3>Options:</h3>
+      {options && (
+        <ul>
+          <li>Color: {options.color}</li>
+          <li>Engine: {options.engine}</li>
+          <li>Interior: {options.interior}</li>
+          <li>Transmission: {options.transmission}</li>
+        </ul>
+      )}
+    </div>
+  );
+};
+
+export default CarDetails;
