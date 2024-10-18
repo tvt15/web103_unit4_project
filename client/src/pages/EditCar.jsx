@@ -1,78 +1,123 @@
 import '../App.css'
+import '../css/EditCar.css';
 import React, { useState, useEffect } from 'react';
 import { getCar, updateCar } from '../services/CarsAPI';
-import { useParams, useNavigate } from 'react-router-dom';
-import '../css/EditCar.css';
+import { useParams } from 'react-router-dom';
+
+const componentPrices = {
+  color: { Red: 500, Blue: 400, Black: 450 },
+  engine: { 'V6': 2000, 'V8': 3000, 'Electric': 4000 },
+  interior: { Leather: 1500, Fabric: 1000, Vinyl: 800 },
+  transmission: { Automatic: 1200, Manual: 1000 }
+};
+
+const basePrice = 10000;
 
 const EditCar = ({ title }) => {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const [car, setCar] = useState(null);
   const [name, setName] = useState('');
   const [options, setOptions] = useState({
-    color: '',
-    engine: '',
-    interior: '',
-    transmission: ''
+    color: 'Red',
+    engine: 'V6',
+    interior: 'Leather',
+    transmission: 'Automatic'
   });
-  const [price, setPrice] = useState('');
+  const [price, setPrice] = useState(basePrice);
 
   useEffect(() => {
     const fetchCar = async () => {
-      const data = await getCar(id);
-      setCar(data);
-      setName(data.name);
-      setOptions(data.options);
-      setPrice(data.price);
+      const car = await getCar(id);
+      setName(car.name);
+      setOptions(car.options);
     };
     fetchCar();
   }, [id]);
 
+  useEffect(() => {
+    const calculatedPrice = basePrice + 
+      componentPrices.color[options.color] +
+      componentPrices.engine[options.engine] +
+      componentPrices.interior[options.interior] +
+      componentPrices.transmission[options.transmission];
+    setPrice(calculatedPrice);
+  }, [options]);
+
+  const handleOptionChange = (e) => {
+    setOptions({ ...options, [e.target.name]: e.target.value });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const carData = { name, options, price };
-    await updateCar(id, carData);
-    navigate(`/customcars`);
+    const updatedCar = { name, options, price };
+    await updateCar(id, updatedCar);
   };
 
-  const optionList = {
-    color: ['Red', 'Blue', 'Green', 'Black', 'White'],
-    engine: ['V6', 'V8', 'Electric'],
-    interior: ['Leather', 'Cloth'],
-    transmission: ['Automatic', 'Manual']
-  };
+  return (
+    <div className='form-container'>
+      <h2>{title}</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Car Name:</label>
+          <input
+            type='text'
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </div>
+        
+        <div>
+          <label>Color:</label>
+          <select name='color' value={options.color} onChange={handleOptionChange}>
+            {Object.keys(componentPrices.color).map((color) => (
+              <option key={color} value={color}>
+                {color} (${componentPrices.color[color]})
+              </option>
+            ))}
+          </select>
+        </div>
 
-  return car ? (
-    <div className="edit-car-container">
-      <h1>{title}</h1>
-      <form onSubmit={handleSubmit} className="edit-car-form">
-        <label>
-          Car Name:
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
-        </label>
-        {Object.keys(optionList).map((optionKey) => (
-          <label key={optionKey}>
-            {optionKey.charAt(0).toUpperCase() + optionKey.slice(1)}:
-            <select value={options[optionKey]} onChange={(e) => setOptions({ ...options, [optionKey]: e.target.value })}>
-              {optionList[optionKey].map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </label>
-        ))}
-        <label>
-          Price:
-          <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} required />
-        </label>
-        <button type="submit">Update Car</button>
+        <div>
+          <label>Engine:</label>
+          <select name='engine' value={options.engine} onChange={handleOptionChange}>
+            {Object.keys(componentPrices.engine).map((engine) => (
+              <option key={engine} value={engine}>
+                {engine} (${componentPrices.engine[engine]})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label>Interior:</label>
+          <select name='interior' value={options.interior} onChange={handleOptionChange}>
+            {Object.keys(componentPrices.interior).map((interior) => (
+              <option key={interior} value={interior}>
+                {interior} (${componentPrices.interior[interior]})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label>Transmission:</label>
+          <select name='transmission' value={options.transmission} onChange={handleOptionChange}>
+            {Object.keys(componentPrices.transmission).map((transmission) => (
+              <option key={transmission} value={transmission}>
+                {transmission} (${componentPrices.transmission[transmission]})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <strong>Total Price: ${price}</strong>
+        </div>
+
+        <button type='submit'>Update Car</button>
       </form>
     </div>
-  ) : (
-    <p>Loading...</p>
   );
 };
 
 export default EditCar;
-
