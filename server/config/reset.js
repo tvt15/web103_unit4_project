@@ -5,7 +5,7 @@ import { carData } from '../data/carData.js'
 const createCarTable = async () => {
     const createTableQuery = `
         DROP TABLE IF EXISTS custom_items CASCADE;
-        DROP TABLE IF EXISTS custom_items CASCADE;
+        DROP TABLE IF EXISTS custom_cars CASCADE;
 
         CREATE TABLE IF NOT EXISTS custom_cars (
         id SERIAL PRIMARY KEY,
