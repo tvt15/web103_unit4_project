@@ -23,6 +23,7 @@ const CreateCar = ({ title }) => {
   });
   const [price, setPrice] = useState(basePrice);
   const navigate = useNavigate();
+  const [error, setError] = useState(''); // Error message state
   // Calculate total price whenever options change
   useEffect(() => {
     const calculatedPrice = basePrice + 
@@ -37,8 +38,21 @@ const CreateCar = ({ title }) => {
     setOptions({ ...options, [e.target.name]: e.target.value });
   };
 
+  // Validation check for invalid combinations
+  const validateOptions = () => {
+    if (options.engine === 'Electric' && options.transmission === 'Manual') {
+      return 'Electric cars cannot have manual transmission.';
+    }
+    return ''; // No error if valid
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validationError = validateOptions();
+    if (validationError) {
+      setError(validationError); // Set error message if invalid
+      return; // Prevent submission
+    }
     const newCar = { name, options, price };
     await createCar(newCar);
     navigate('/customcars');
@@ -105,6 +119,8 @@ const CreateCar = ({ title }) => {
         <div>
           <strong>Total Price: ${price}</strong>
         </div>
+
+        {error && <div className="error-message">{error}</div>} {/* Display error message */}
 
         <button type='submit'>Create Car</button>
       </form>
