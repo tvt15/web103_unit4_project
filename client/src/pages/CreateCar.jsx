@@ -2,6 +2,7 @@ import '../App.css'
 import '../css/CreateCar.css';
 import React, { useState, useEffect } from 'react';
 import { createCar } from '../services/CarsAPI';
+import { useNavigate } from 'react-router-dom';
 
 const componentPrices = {
   color: { Red: 500, Blue: 400, Black: 450 },
@@ -21,7 +22,7 @@ const CreateCar = ({ title }) => {
     transmission: 'Automatic'
   });
   const [price, setPrice] = useState(basePrice);
-
+  const navigate = useNavigate();
   // Calculate total price whenever options change
   useEffect(() => {
     const calculatedPrice = basePrice + 
@@ -40,6 +41,7 @@ const CreateCar = ({ title }) => {
     e.preventDefault();
     const newCar = { name, options, price };
     await createCar(newCar);
+    navigate('/customcars');
   };
 
   return (

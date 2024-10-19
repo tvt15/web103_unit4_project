@@ -3,6 +3,7 @@ import '../css/EditCar.css';
 import React, { useState, useEffect } from 'react';
 import { getCar, updateCar } from '../services/CarsAPI';
 import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const componentPrices = {
   color: { Red: 500, Blue: 400, Black: 450 },
@@ -12,6 +13,7 @@ const componentPrices = {
 };
 
 const basePrice = 10000;
+
 
 const EditCar = ({ title }) => {
   const { id } = useParams();
@@ -23,6 +25,7 @@ const EditCar = ({ title }) => {
     transmission: 'Automatic'
   });
   const [price, setPrice] = useState(basePrice);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCar = async () => {
@@ -50,6 +53,7 @@ const EditCar = ({ title }) => {
     e.preventDefault();
     const updatedCar = { name, options, price };
     await updateCar(id, updatedCar);
+    navigate(`/customcars/${id}`)
   };
 
   return (

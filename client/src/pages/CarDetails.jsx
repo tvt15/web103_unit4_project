@@ -1,7 +1,7 @@
 import '../App.css'
 import React, { useEffect, useState } from 'react';
 import { getCar } from '../services/CarsAPI';
-import { useParams } from 'react-router-dom';
+import { useParams,Link } from 'react-router-dom';
 
 const CarDetails = ({ title }) => {
   const { id } = useParams();
@@ -19,6 +19,10 @@ const CarDetails = ({ title }) => {
     };
     fetchCar();
   }, [id]);
+  const handleDelete = async (id) => {
+    await deleteCar(id);
+    setCars(cars.filter((car) => car.id !== id));
+  };
 
   if (error) {
     return <p>{error}</p>;
@@ -45,6 +49,10 @@ const CarDetails = ({ title }) => {
           <li>Transmission: {options.transmission}</li>
         </ul>
       )}
+      <Link to={`/edit/${id}/`}>
+        <button>Edit Car</button>
+      </Link>
+      <button onClick={() => handleDelete(car.id)} className="delete-btn">Delete</button>
     </div>
   );
 };
