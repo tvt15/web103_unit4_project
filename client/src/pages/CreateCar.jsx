@@ -24,6 +24,8 @@ const CreateCar = ({ title }) => {
   const [price, setPrice] = useState(basePrice);
   const navigate = useNavigate();
   const [error, setError] = useState(''); // Error message state
+  const [warning, setWarning] = useState(''); // Warning message state
+
   // Calculate total price whenever options change
   useEffect(() => {
     const calculatedPrice = basePrice + 
@@ -35,7 +37,18 @@ const CreateCar = ({ title }) => {
   }, [options]);
 
   const handleOptionChange = (e) => {
-    setOptions({ ...options, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    
+    // Check for invalid combination (Electric + Manual)
+    if (name === 'transmission' && options.engine === 'Electric' && value === 'Manual') {
+      setWarning('Manual transmission is not available for Electric cars.');
+    } else if (name === 'engine' && value === 'Electric' && options.transmission === 'Manual') {
+      setWarning('Manual transmission is not available for Electric cars.');
+    } else {
+      setWarning('');  // Clear warning when valid combinations are selected
+    }
+
+    setOptions({ ...options, [name]: value });
   };
 
   // Validation check for invalid combinations
@@ -56,6 +69,13 @@ const CreateCar = ({ title }) => {
     const newCar = { name, options, price };
     await createCar(newCar);
     navigate('/customcars');
+  };
+
+  const isTransmissionDisabled = (transmission) => {
+    if (options.engine === 'Electric' && transmission === 'Manual') {
+      return true;
+    }
+    return false;
   };
 
   return (
@@ -114,6 +134,7 @@ const CreateCar = ({ title }) => {
               </option>
             ))}
           </select>
+          {warning && <div className="warning-message">{warning}</div>} {/* Show warning if incompatible */}
         </div>
 
         <div>
@@ -122,7 +143,7 @@ const CreateCar = ({ title }) => {
 
         {error && <div className="error-message">{error}</div>} {/* Display error message */}
 
-        <button type='submit'>Create Car</button>
+        <button type='submit' disabled={!!warning}>Create Car</button> {/* Disable submit if warning exists */}
       </form>
     </div>
   );
